@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"password/account"
-	"password/files"
 )
 
 func main() {
@@ -52,14 +51,6 @@ func createAccount() {
 	}
 	vault := account.NewVault()
 	vault.AddAccount(*myAccount)
-
-	data, err := vault.ToBytes()
-
-	if err != nil {
-		fmt.Println("Failed to covert data into JSON")
-		return
-	}
-	files.WriteFile(data, "data.json")
 }
 
 func promptData(prompt string) string {
