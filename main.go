@@ -3,29 +3,49 @@ package main
 import (
 	"fmt"
 	"password/account"
+
+	"github.com/fatih/color"
 )
 
 func main() {
 	fmt.Println("__Password Manager__")
+	vault := account.NewVault()
 Menu:
 	for {
 		variant := getMenu()
 		switch variant {
 		case 1:
-			createAccount()
+			createAccount(vault)
 		case 2:
-			findAccount()
+			findAccount(vault)
 		case 3:
-			deleteAccount()
+			deleteAccount(vault)
 		default:
 			break Menu
 		}
 	}
 }
 
-func findAccount() {}
+func findAccount(vault *account.Vault) {
+	url := promptData("Enter URL")
+	accounts := vault.FindAccountsByUrl(url)
+	if len(accounts) == 0 {
+		color.Red("Account not found")
+	}
+	for _, account := range accounts {
+		account.Output()
+	}
+}
 
-func deleteAccount() {}
+func deleteAccount(vault *account.Vault) {
+	url := promptData("Enter URL")
+	isDeleted := vault.DeleteAccountsByUrl(url)
+	if isDeleted {
+		color.Green("Account deleted")
+	} else {
+		color.Red("Account not found")
+	}
+}
 
 func getMenu() int {
 	var variant int
@@ -39,7 +59,7 @@ func getMenu() int {
 	return variant
 }
 
-func createAccount() {
+func createAccount(vault *account.Vault) {
 	login := promptData("Enter your login")
 	password := promptData("Enter your password")
 	url := promptData("Enter URL")
@@ -49,7 +69,6 @@ func createAccount() {
 		fmt.Println("Incorrect URL or Login format")
 		return
 	}
-	vault := account.NewVault()
 	vault.AddAccount(*myAccount)
 }
 
